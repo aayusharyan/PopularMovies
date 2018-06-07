@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">MovieExplorer</string>
+    <string name="movie_poster_placeholder">Movie Poster Placeholder</string>
+    <string name="sort_popular_label">Sort by Popular</string>
+    <string name="sort_rating_label">Sort by Rating</string>
+</resources>

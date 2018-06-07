@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- TODO: Insert TMDB API Key Here -->
+    <string name="api_key_v3">TMDB API KEY V3 HERE</string>
+    <string name="api_popular_url">https://api.themoviedb.org/3/movie/popular</string>
+    <string name="api_rating_url">https://api.themoviedb.org/3/movie/top_rated</string>
+    <string name="api_poster_url">https://image.tmdb.org/t/p/w300</string>
+    <string name="api_backdrop_url">https://image.tmdb.org/t/p/w780</string>
+    <string name="api_movie_url">https://api.themoviedb.org/3/movie/</string>
+</resources>
