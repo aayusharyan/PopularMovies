@@ -3,19 +3,21 @@ package com.aayushsinha.android.movieexplorer;
 import android.Manifest;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int sortOrderFavourites = 2;
     public static AppDatabase appDatabase;
     private MainViewModel mainViewModel;
+    private RequestQueue queue;
 
     private static int sort;
 
@@ -55,23 +58,22 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.sort_popular:
-                editor.putInt(sortOrder, sortOrderPopular);
+                sort = sortOrderPopular;
                 break;
             case R.id.sort_rating:
-                editor.putInt(sortOrder, sortOrderRating);
+                sort = sortOrderRating;
                 break;
             case R.id.show_favourites:
-                editor.putInt(sortOrder, sortOrderFavourites);
+                sort = sortOrderFavourites;
                 break;
             default:
-                editor.putInt(sortOrder, sortOrderPopular);
+                sort = sortOrderPopular;
                 break;
         }
 
-        Intent intent = getIntent();
-        finish();
-        startActivity(intent);
+        editor.putInt(sortOrder, sort);
         editor.apply();
+        setupRV();
         return super.onOptionsItemSelected(item);
     }
 
@@ -80,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SharedPreferences pref = getApplicationContext().getSharedPreferences(sharedPreferencesName, 0);
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(sharedPreferencesName, sortOrderPopular);
         sort = pref.getInt(sortOrder, 0);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -95,22 +97,23 @@ public class MainActivity extends AppCompatActivity {
 
         mRecyclerView.setHasFixedSize(false);
 
-        GridLayoutManager mLayoutManager = new GridLayoutManager(this, 2);
-
-        if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mLayoutManager = new GridLayoutManager(this, 4);
-        }
+        int spanCount = MainActivity.calculateNoOfColumns(this);
+        GridLayoutManager mLayoutManager = new GridLayoutManager(this, spanCount);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
+        queue = Volley.newRequestQueue(this);
 
+        setupRV();
+    }
+
+    private void setupRV() {
+        ((ProgressBar)findViewById(R.id.loading_list_progressbar)).setVisibility(View.VISIBLE);
         boolean request = true;
 
         String url = getString(R.string.api_popular_url)+"?api_key="+getString(R.string.api_key_v3)+"&language=en-US&page=1";
 
-        if(sort == sortOrderPopular) {
+        if(sort == sortOrderRating) {
             url = getString(R.string.api_rating_url)+"?api_key="+getString(R.string.api_key_v3)+"&language=en-US&page=1";
         } else if(sort == sortOrderFavourites) {
             request = false;
@@ -133,8 +136,16 @@ public class MainActivity extends AppCompatActivity {
             });
 
             queue.add(stringRequest);
+
+            queue.addRequestFinishedListener(new RequestQueue.RequestFinishedListener<Object>() {
+                @Override
+                public void onRequestFinished(Request<Object> request) {
+                    ((ProgressBar)findViewById(R.id.loading_list_progressbar)).setVisibility(View.GONE);
+                }
+            });
         } else {
             setupData();
+            ((ProgressBar)findViewById(R.id.loading_list_progressbar)).setVisibility(View.GONE);
         }
     }
 
@@ -174,5 +185,15 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+    }
+
+    public static int calculateNoOfColumns(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        int scalingFactor = 200;
+        int noOfColumns = (int) (dpWidth / scalingFactor);
+        if(noOfColumns < 2)
+            noOfColumns = 2;
+        return noOfColumns;
     }
 }
