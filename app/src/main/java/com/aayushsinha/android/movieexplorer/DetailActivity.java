@@ -53,7 +53,6 @@ public class DetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if(item.getItemId() == R.id.favourite) {
             if((movieData == null) || executingDB) {
                 Toast.makeText(this, R.string.loading_wait_toast, Toast.LENGTH_SHORT).show();
@@ -76,6 +75,9 @@ public class DetailActivity extends AppCompatActivity {
                 //Time to Insert Data into DB
                 insertData();
             }
+        } else {
+            finish();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
