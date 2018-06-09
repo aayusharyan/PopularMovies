@@ -3,4 +3,16 @@
     <string name="movie_poster_placeholder">Movie Poster Placeholder</string>
     <string name="sort_popular_label">Sort by Popular</string>
     <string name="sort_rating_label">Sort by Rating</string>
+    <string name="no_review_found_message">No Reviews Found</string>
+    <string name="error_loading_data_message">Error Loading Data</string>
+    <string name="no_trailers_message">No Trailers Found</string>
+    <string name="reviews_label">Reviews:</string>
+    <string name="loading_label">Loading...</string>
+    <string name="trailers_label">Trailers:</string>
+    <string name="favourite_label">Favourite</string>
+    <string name="show_favourites_label">Show Favourites</string>
+    <string name="loading_wait_toast">Please wait for Loading to complete</string>
+    <string name="share_video_label">Share Video!</string>
+    <string name="player_error_label">No Player found for YouTube</string>
+    <string name="trailer_error_label">Non YouTube Trailers cannot be Played</string>
 </resources>

@@ -1,13 +1,16 @@
 package com.aayushsinha.android.movieexplorer;
 
 import android.Manifest;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,11 +30,16 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static RecyclerView mRecyclerView;
+    private static RecyclerView mRecyclerView;
     public static final String sharedPreferencesName = "movieExplorer";
     public static final String sortOrder = "sortOrder";
     public static final int sortOrderPopular = 0;
     public static final int sortOrderRating = 1;
+    public static final int sortOrderFavourites = 2;
+    public static AppDatabase appDatabase;
+    private MainViewModel mainViewModel;
+
+    private static int sort;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -52,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.sort_rating:
                 editor.putInt(sortOrder, sortOrderRating);
                 break;
+            case R.id.show_favourites:
+                editor.putInt(sortOrder, sortOrderFavourites);
+                break;
             default:
                 editor.putInt(sortOrder, sortOrderPopular);
                 break;
@@ -70,12 +81,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences(sharedPreferencesName, 0);
-        int sort = pref.getInt(sortOrder, 0);
+        sort = pref.getInt(sortOrder, 0);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
                 != PackageManager.PERMISSION_GRANTED) {
             Log.e("PERMISSION", "Internet Default Permission not Granted");
             finish();
         }
+
+        mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        appDatabase = mainViewModel.getAppDatabase();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
@@ -92,31 +106,64 @@ public class MainActivity extends AppCompatActivity {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
 
+        boolean request = true;
+
         String url = getString(R.string.api_popular_url)+"?api_key="+getString(R.string.api_key_v3)+"&language=en-US&page=1";
 
         if(sort == sortOrderPopular) {
             url = getString(R.string.api_rating_url)+"?api_key="+getString(R.string.api_key_v3)+"&language=en-US&page=1";
+        } else if(sort == sortOrderFavourites) {
+            request = false;
+
         }
 
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-            new Response.Listener<String>() {
+        if(request) {
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            MainActivity.APIResponse(response);
+                        }
+                    }, new Response.ErrorListener() {
                 @Override
-                public void onResponse(String response) {
-                    MainActivity.APIResponse(response);
+                public void onErrorResponse(VolleyError error) {
+                    //mTextView.setText("That didn't work!");
+                    Log.e("VOLLEY", "Error Message");
                 }
-            }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //mTextView.setText("That didn't work!");
-                Log.e("VOLLEY", "Error Message");
-            }
-        });
+            });
 
-        queue.add(stringRequest);
+            queue.add(stringRequest);
+        } else {
+            setupData();
+        }
     }
 
-    public static void APIResponse(String response) {
+    private void setupData() {
+
+        mainViewModel.getMovies().observe(this, new Observer<SingleMovie[]>() {
+            @Override
+            public void onChanged(@Nullable SingleMovie[] singleMovies) {
+                final JSONArray movies_json = new JSONArray();
+                for (SingleMovie movie : singleMovies) {
+                    JSONObject singleMovie = new JSONObject();
+                    try {
+                        singleMovie.put("title", movie.getName());
+                        singleMovie.put("poster_path", movie.getPoster_url());
+                        singleMovie.put("id", movie.getTmdb_id());
+                    } catch (JSONException e) {
+                        Log.e("JSON", "Error Creating JSON from DB");
+                        e.printStackTrace();
+                    }
+                    movies_json.put(singleMovie);
+
+                }
+                MovieAdapter movieAdapter = new MovieAdapter(movies_json);
+                mRecyclerView.setAdapter(movieAdapter);
+            }
+        });
+    }
+
+    private static void APIResponse(String response) {
         try {
             JSONObject res = new JSONObject(response);
             JSONArray movies = res.getJSONArray("results");

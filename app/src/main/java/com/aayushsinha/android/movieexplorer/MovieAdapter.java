@@ -22,7 +22,7 @@ import org.json.JSONObject;
  */
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
-    JSONArray dataSet;
+    private JSONArray dataSet;
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
@@ -41,7 +41,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         }
     }
 
-    public MovieAdapter(JSONArray dataSet) {
+    MovieAdapter(JSONArray dataSet) {
         this.dataSet = dataSet;
     }
 
@@ -51,8 +51,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         CardView v = (CardView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.movie_card_layout, parent, false);
 
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+        return new ViewHolder(v);
     }
 
     @Override

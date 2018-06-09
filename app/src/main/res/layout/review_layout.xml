@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="7dp"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <TextView
+        android:id="@+id/review_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Reviewer Name:"
+        android:textAppearance="@android:style/TextAppearance.Material.Title"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/review_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Review Content"
+        android:textAppearance="@android:style/TextAppearance.Material.Body1"
+        android:textSize="15sp" />
+</LinearLayout>

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_detail_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,74 +11,146 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <ImageView
+                    android:id="@+id/movie_backdrop"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    app:srcCompat="@android:color/darker_gray"
+                    tools:layout_height="200dp" />
+
+                <TextView
+                    android:id="@+id/movie_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAppearance="@android:style/TextAppearance.Material.Title"
+                    android:textSize="30sp"
+                    tools:text="Movie Name"
+                    android:padding="7dp"/>
+
+                <TextView
+                    android:id="@+id/movie_release"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="(2018)"
+                    android:padding="7dp"/>
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <TextView
+                    android:id="@+id/movie_rating"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                    android:textSize="20sp"
+                    tools:text="4.5"
+                    android:padding="7dp"/>
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <TextView
+                    android:id="@+id/movie_plot_synopsis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                    android:textSize="20sp"
+                    android:padding="7dp"
+                    android:layout_gravity="center_vertical|end"
+                    tools:text="Plot Synopsis" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/trailers_label"
+                    android:textAppearance="@android:style/TextAppearance.Material.Title"
+                    android:textSize="20sp"
+                    android:padding="7dp"/>
+
+                <TextView
+                    android:id="@+id/trailers_loading_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/loading_label"
+                    android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                    android:padding="7dp"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:orientation="horizontal"
+                    android:id="@+id/trailers_rv" >
+
+                </android.support.v7.widget.RecyclerView>
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="7dp"
+                    android:text="@string/reviews_label"
+                    android:textAppearance="@android:style/TextAppearance.Material.Title"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/reviews_loading_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/loading_label"
+                    android:padding="7dp"
+                    android:textAppearance="@android:style/TextAppearance.Material.Body1" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/reviews_rv">
+
+                </android.support.v7.widget.RecyclerView>
+
+
+            </LinearLayout>
+
+
+        <ProgressBar
+            android:id="@+id/loading_detail"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"/>
 
-
-            <ImageView
-                android:id="@+id/movie_backdrop"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                app:srcCompat="@android:color/darker_gray"
-                tools:layout_height="200dp" />
-
-            <TextView
-                android:id="@+id/movie_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textAppearance="@android:style/TextAppearance.Material.Title"
-                android:textSize="30sp"
-                tools:text="Movie Name" />
-
-            <TextView
-                android:id="@+id/movie_release"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="(2018)" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="20dp" />
-
-            <TextView
-                android:id="@+id/movie_rating"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:textAppearance="@android:style/TextAppearance.Material.Body1"
-                android:textSize="20sp"
-                tools:text="4.5" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="20dp" />
-
-            <TextView
-                android:id="@+id/movie_plot_synopsis"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@android:style/TextAppearance.Material.Body1"
-                android:textSize="20sp"
-                tools:text="Plot Synopsis" />
-
-
-        </LinearLayout>
+        </RelativeLayout>
 
     </ScrollView>
 
-    <ProgressBar
-        android:id="@+id/loading_detail"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerInParent="true"
-        android:layout_centerVertical="true"/>
-
-</RelativeLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
 

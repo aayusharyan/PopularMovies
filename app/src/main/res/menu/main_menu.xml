@@ -3,4 +3,5 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:title="@string/sort_popular_label" android:id="@+id/sort_popular" />
     <item android:title="@string/sort_rating_label" android:id="@+id/sort_rating" />
+    <item android:title="@string/show_favourites_label" android:id="@+id/show_favourites" />
 </menu>
